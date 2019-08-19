@@ -1,22 +1,48 @@
 const fs = require('fs');
 
-class WordChain{
 
-    constructor(firstWord,secondWord){
+/*
+Input words will be between 3 and 7 letters in length
+Each word pair has two different words of the same length
+The input file can have any number of lines
+
+4 cat,cot,cog,dog
+
+4 lead,load,goad,gold {
+checks first letter changes to 'g' (rejects 'gead' is in list)
+goes back to 'lead'
+checks second letter changes to 'o' (accepts 'load' is not in list!')
+pushes to 'load' to chain.
+checks third letter changes to 'l' (rejects 'lold' is not  in list)
+goes back to 'load'
+SET char back to 0!!!!!
+checks first letter changes to 'g' (accepts 'goad' is in list)
+GOES THROUGH THE REST AND REJECTS AS NOT IN LIST
+checks third letter changes to 'l' (accepts 'gold' is in list)
+Complete
+}
+
+
+6 ruby,rubs,robs,rods,rode,code
+*/
+
+class WordChain{
+    constructor(firstWord,secondWord,file){
         this.firstWord = firstWord;
         this.secondWord = secondWord;
-        this.arr = [];
+        this.file = file;
         this.chainedWords = [];
     }
 
+    //Used to change the first word if in list.
     setFirstWord(firstWord){
         this.firstWord = firstWord
     }
 
     //Get Data from the text file.
-    getData(file) {
+    getData() {
         return new Promise((resolve,reject) => {
-            fs.readFile(file,'utf-8', (err,data) => {
+            fs.readFile(this.file,'utf-8', (err,data) => {
                 if(err){
                     reject(err)
                 } else {
@@ -24,76 +50,91 @@ class WordChain{
                 }
             })
         })
-
     }
 
-     checkIfWordInList(list, word){
-        return list.indexOf(word) !== -1;
+    // Checks if word is in list which will be an array
+     checkIfWordIsInList(list, word){
+        return list.indexOf(word.join('')) !== -1;
     }
-
-
-    returnChain(firstName, secondName){
-        const { chainWords } = this;
-        if(firstName === secondName){
-            return chainWords
-        }
-    }
-
 
     //Print the result
     print(){
-        const { arr, firstName } = this;
-            console.log(firstName)
+        const { chainedWords } = this;
+            console.log(chainedWords)
     };
 
+    addsWordToChain(splitWord){
+        const { chainedWords } = this;
+        //If true name will be equal to the joined array and pushed into the chain.
+        this.setFirstWord(splitWord.join(''));
+        chainedWords.push(splitWord.join(''));
+    }
+
+   revertsAndMovesOnToNextCharacter(){
+
+   }
 
     run() {
-        this.getData('./50kwords.txt').then( data => {
-            const { firstWord, secondWord, checkIfWordInList, chainedWords } = this;
-            let splitN = firstWord.split('');
-            console.log(splitN);
-            let char = 0;
-            while (firstWord !== secondWord) {
-                if (splitN[char] !== secondWord[char]) {
-                    splitN[char] = secondWord[char];
-                    console.log(` HEREEEEEE ${splitN.join('')}`)
-                    //Check if word after change is in array.
-                    if (checkIfWordInList(data,splitN.join(''))) {
-                        console.log('---- was found ----');
-                        //If true name will be equal to the joined array and pushed into the chain.
-                        console.log(splitN.join(''));
-                        this.setFirstWord(splitN.join('').toString());
-                        console.log('here');
-                        console.log(splitN.join(''));
-                        chainedWords.push(splitN.join(''));
-                        console.log(chainedWords);
-                        //Move to the next word
-                        char++;
-
-                    } else {
-                        //Else the word isnt in the array.
-                        console.log('---- wasnt found ----');
-                        //Change the word back the the normal word
-                        splitN[char] = secondWord[char];
-                        console.log(splitN[char])
-                        //If the char is the last of the length move to 0 and relay back through the word of arrays
-                        if(char === splitN.length - 1){
-                            char = 0;
+        const {firstWord, secondWord, checkIfWordIsInList, chainedWords, file} = this;
+        // Input words will be between 3 and 7 letters in length
+        if (firstWord.length < 3 || firstWord.length > 7 || secondWord.length < 3 || secondWord.length > 7) {
+            if (firstWord.length !== secondWord.length) {
+                 console.log('Need to be the same length');
+                 return;
+            }
+            console.log('Not valid input lengths');
+            return;
+        }
+            this.getData(file).then(data => {
+                //Push data in an array.
+                const database = data.split('\n');
+                let splitFirstWord = firstWord.split('');
+                let char = 0;
+                chainedWords.push(this.firstWord);
+                while (this.firstWord !== this.secondWord) {
+                    if (splitFirstWord[char] !== secondWord[char]) {
+                        splitFirstWord[char] = secondWord[char];
+                        console.log(splitFirstWord)
+                        if (checkIfWordIsInList(database, splitFirstWord)) {
+                            this.addsWordToChain(splitFirstWord);
+                            //If char === word.length -1  and firstword !== lastword start the search from the beginning again
+                            if (char === splitFirstWord.length - 1 && this.firstWord !== this.secondWord) {
+                                char = 0
+                            } else {
+                                char++;
+                            }
                         } else {
-                            //Else move on to the next word.
-                            char++
+                            //If word is === and still not in the list
+                            if (splitFirstWord[char] === secondWord[char]) {
+                                //MAKE IT THE FIRST CHAR OF THE WORD AGAIN!!!!.
+                                if (!checkIfWordIsInList(database, splitFirstWord)) {
+                                    console.log('We made it broooo!');
+                                    splitFirstWord[char] = firstWord[char];
+                                    char = 0;
+                                    console.log(splitFirstWord.join(''))
+                                    console.log(chainedWords)
+                                }
+                            }
+                            //Else the word isnt in the array.
+                            //Change the word back the the normal word
+                            splitFirstWord[char] = firstWord[char];
+                            //If the char is the last of the length move to 0 and relay back through the word of arrays
+                            if (char === splitFirstWord.length - 1) {
+                                console.log('inHere')
+                                char = 0;
+                            } else {
+                                //Else move on to the next word.
+                                char++;
+                            }
                         }
-
                     }
                 }
+                this.print();
+            });
+        }
 
-            }
-
-
-        });
-    }
 }
 
 // Run Class
-const wordChain = new WordChain('cat','dog');
+const wordChain = new WordChain('cat','dog',  './50kwords.txt');
 wordChain.run();
