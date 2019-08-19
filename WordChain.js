@@ -96,9 +96,13 @@ class WordChain {
             while (this.firstWord !== this.secondWord) {
                 if (this.firstWord[char] !== secondWord[char]) {
                     splitFirstWord[char] = secondWord[char];
+                    console.log('Diff')
                     console.log(splitFirstWord);
                     if (checkIfWordIsInList(database, splitFirstWord)) {
+                        console.log('herekjkj')
                         this.addsWordToChain(splitFirstWord);
+                        console.log(chainedWords)
+                        console.log(char)
                         //If char === word.length -1  and firstword !== lastword start the search from the beginning again
                         if (char === splitFirstWord.length - 1 && this.firstWord !== this.secondWord) {
                             char = 0
@@ -130,11 +134,16 @@ class WordChain {
                             char++;
                         }
                     }
-                } else if(checkIfWordIsInList(database,splitFirstWord)){
-                    console.log('Deyah')
-                    char++;
-                } else {
+                }
+                //Check if word is in database and if word is already added to the chained list.
+                // else if() {
+                //
+                // }
+                else if(checkIfWordIsInList(database,splitFirstWord)){
+                    console.log('Deyah');
                     char = 0;
+                } else {
+                    char++;
                 }
             }
             this.print();
