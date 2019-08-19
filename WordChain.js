@@ -15,6 +15,8 @@ checks second letter changes to 'o' (accepts 'load' is not in list!')
 pushes to 'load' to chain.
 checks third letter changes to 'l' (rejects 'lold' is not  in list)
 goes back to 'load'
+check the fourth letter change to 'd' (accept  'load')
+ NEEDS A CHECK IF ALREADY IN CHAIN DOESN'T ADD AND MOVES ON
 SET char back to 0!!!!!
 checks first letter changes to 'g' (accepts 'goad' is in list)
 GOES THROUGH THE REST AND REJECTS AS NOT IN LIST
@@ -92,9 +94,9 @@ class WordChain{
                 let char = 0;
                 chainedWords.push(this.firstWord);
                 while (this.firstWord !== this.secondWord) {
-                    if (splitFirstWord[char] !== secondWord[char]) {
+                    if (this.firstWord[char] !== secondWord[char]) {
                         splitFirstWord[char] = secondWord[char];
-                        console.log(splitFirstWord)
+                        console.log(splitFirstWord);
                         if (checkIfWordIsInList(database, splitFirstWord)) {
                             this.addsWordToChain(splitFirstWord);
                             //If char === word.length -1  and firstword !== lastword start the search from the beginning again
@@ -104,37 +106,40 @@ class WordChain{
                                 char++;
                             }
                         } else {
+                            console.log('Same char');
+                            console.log(splitFirstWord);
+
                             //If word is === and still not in the list
-                            if (splitFirstWord[char] === secondWord[char]) {
-                                //MAKE IT THE FIRST CHAR OF THE WORD AGAIN!!!!.
-                                if (!checkIfWordIsInList(database, splitFirstWord)) {
-                                    console.log('We made it broooo!');
-                                    splitFirstWord[char] = firstWord[char];
-                                    char = 0;
-                                    console.log(splitFirstWord.join(''))
-                                    console.log(chainedWords)
-                                }
-                            }
                             //Else the word isnt in the array.
                             //Change the word back the the normal word
-                            splitFirstWord[char] = firstWord[char];
                             //If the char is the last of the length move to 0 and relay back through the word of arrays
                             if (char === splitFirstWord.length - 1) {
-                                console.log('inHere')
                                 char = 0;
+                            }
+                            else  if (splitFirstWord[char] === secondWord[char]) {
+                                //MAKE IT THE FIRST CHAR OF THE WORD AGAIN!!!!.
+                                if (!checkIfWordIsInList(database, splitFirstWord)) {
+                                    splitFirstWord[char] = firstWord[char];
+                                    if(char === splitFirstWord.length - 1){
+                                        splitFirstWord[char] = firstWord[char];
+                                        char = 0;
+                                    } else {
+                                        char++
+                                    }
+                                }
                             } else {
-                                //Else move on to the next word.
                                 char++;
                             }
                         }
                     }
                 }
-                this.print();
-            });
+               this.print();
+            })
         }
 
 }
 
+module.exports.WordChain = WordChain;
 // Run Class
-const wordChain = new WordChain('cat','dog',  './50kwords.txt');
+const wordChain = new WordChain('lead','gold',  './50kwords.txt');
 wordChain.run();
