@@ -115,12 +115,11 @@ class WordChain{
                             //If the char is the last of the length move to 0 and relay back through the word of arrays
                             if (char === splitFirstWord.length - 1) {
                                 char = 0;
-                            }
-                            else  if (splitFirstWord[char] === secondWord[char]) {
+                            } else if (splitFirstWord[char] === secondWord[char]) {
                                 //MAKE IT THE FIRST CHAR OF THE WORD AGAIN!!!!.
                                 if (!checkIfWordIsInList(database, splitFirstWord)) {
                                     splitFirstWord[char] = firstWord[char];
-                                    if(char === splitFirstWord.length - 1){
+                                    if (char === splitFirstWord.length - 1) {
                                         splitFirstWord[char] = firstWord[char];
                                         char = 0;
                                     } else {
@@ -133,7 +132,7 @@ class WordChain{
                         }
                     }
                 }
-               this.print();
+                    this.print();
             })
         }
 
@@ -141,5 +140,5 @@ class WordChain{
 
 module.exports.WordChain = WordChain;
 // Run Class
-const wordChain = new WordChain('lead','gold',  './50kwords.txt');
+const wordChain = new WordChain('cat','dog',  './50kwords.txt');
 wordChain.run();
