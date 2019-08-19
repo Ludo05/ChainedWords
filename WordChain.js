@@ -130,9 +130,11 @@ class WordChain {
                             char++;
                         }
                     }
+                } else if(checkIfWordIsInList(database,splitFirstWord)){
+                    console.log('Deyah')
+                    char++;
                 } else {
-                    console.log('Code goes here')
-                    break;
+                    char = 0;
                 }
             }
             this.print();
