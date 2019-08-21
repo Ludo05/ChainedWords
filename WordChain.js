@@ -33,6 +33,10 @@ Complete
 
 
 6 ruby,rubs,robs,rods,rode,code
+split the word first word up.
+search dictionary and split words up to check the difference in arrays.
+if array has a difference of one swap arr to word.
+
 */
 
 class WordChain {
